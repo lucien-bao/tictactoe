@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Tic Tac Toe Version 4</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+
+            body {
+                font-family: Ubuntu;
+            }
+
+            .square {
+                display: inline-block;
+                box-sizing: border-box;
+                margin: 5px;
+                outline: solid #000000 1px;
+                width: 100px;
+                height: 100px;
+
+                text-align: center;
+                font-size: 90px;
+                line-height: 100px;
+                user-select: none;
+            }
+
+            .square:hover {
+                background-color: #ffec8e;
+                cursor: pointer;
+            }
+
+            #turn {
+                border: solid #000000 1px;
+                margin-bottom: 2px;
+                font-size: 20px;
+            }
+
+            #end {
+                border: solid #000000 1px;
+                margin-top: 3px;
+                font-size: 20px;
+            }
+        </style>
+    </head>
+    
+    <body>
+        <h1>The least epic Tic Tac Toe you'll ever play</h1>
+
+        <div id="turn">It's X's turn!</div>
+
+        <script>
+            // The given code
+            const NUM_SQUARES = 9;
+            for (i=0; i<NUM_SQUARES; i++) {
+                id = "sq"+i;
+                document.write( "<div class='square' id='" + id + "'></div>" );
+            }
+
+            let started = false;
+
+            // Tracking turns
+            let xToMove = true;
+            const changeToMove = () => {
+                xToMove = !xToMove;
+                document.getElementById("turn").innerHTML =
+                    xToMove ? "It's X's turn!" : "It's O's turn!";
+            }
+            const gameEndCheckCallback = () => {
+                let moves = [];
+                [0, 1, 2, 3, 4, 5, 6, 7, 8].forEach((value) => {
+                    const square = document.getElementById("sq" + value);
+                    if(square.innerHTML === "X") moves.push("X");
+                    else if(square.innerHTML === "O") moves.push("O");
+                    else moves.push("-");
+                });
+
+                const winConditions = [
+                    moves[0] + moves[1] + moves[2], // top row
+                    moves[3] + moves[4] + moves[5], // middle row
+                    moves[6] + moves[7] + moves[8], // bottom row
+                    moves[0] + moves[3] + moves[6], // left col
+                    moves[1] + moves[4] + moves[7], // middle col
+                    moves[2] + moves[5] + moves[8], // right col
+                    moves[0] + moves[4] + moves[8], // NW-SE diagonal
+                    moves[2] + moves[4] + moves[6], // NE-SW diagonal
+                ];
+
+                if(winConditions.find((value) => value === "XXX")) {
+                    document.getElementById("end").innerHTML = "X wins!";
+                    document.getElementById("turn").innerHTML = "&nbsp;";
+                    started = false;
+                } else if(winConditions.find((value) => value === "OOO")) {
+                    document.getElementById("end").innerHTML = "O wins!";
+                    document.getElementById("turn").innerHTML = "&nbsp;";
+                    started = false;
+                } else if(!moves.find((value) => value === "-")) {
+                    document.getElementById("end").innerHTML = "Stalemate...";
+                    document.getElementById("turn").innerHTML = "&nbsp;";
+                    started = false;
+                }
+            }
+            const onClickCallback = (e) => {
+                const id = e.target.id;
+                const square = document.getElementById(id);
+
+                // If already occupied, don't go through with the logic
+                if(square.innerHTML === "X"
+                || square.innerHTML === "O"
+                || !started)
+                    return;
+                changeToMove();
+
+                square.innerHTML = xToMove ? "X" : "O";
+
+                gameEndCheckCallback();
+            }
+
+            for(let i = 0; i < NUM_SQUARES; i++) {
+                const id = "sq" + i;
+                const square = document.getElementById(id);
+                
+                square.innerHTML = "&nbsp;";
+                square.addEventListener("click", onClickCallback);
+
+                // Form a 3x3 grid
+                if(i % 3 === 2) {
+                    const lineBreak = document.createElement("br");
+                    square.after(lineBreak);
+                }
+
+                // Manually setting w/ JS
+                if(i == 2) {
+                    square.innerHTML = "X";
+                } else if(i == 3) {
+                    square.innerHTML = "O";
+                }
+            }
+
+            const startGameCallback = () => {
+                started = true;
+                // Randomize who starts first
+                if(Math.random() < 0.5)
+                    changeToMove();
+                
+                // Clear the board
+                for(let i = 0; i < NUM_SQUARES; i++)
+                    document.getElementById("sq" + i).innerHTML = "&nbsp;";
+            }
+        </script>
+
+        <button type="button" id="start">Start Game</button>
+        <script>
+            document.getElementById("start")
+                    .addEventListener("click", startGameCallback)
+        </script>
+
+        <div id="end">&nbsp;</div>
+    </body>
+</html>
