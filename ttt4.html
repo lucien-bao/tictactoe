@@ -109,11 +109,11 @@
                 || square.innerHTML === "O"
                 || !started)
                     return;
-                changeToMove();
 
                 square.innerHTML = xToMove ? "X" : "O";
 
                 gameEndCheckCallback();
+                changeToMove();
             }
 
             for(let i = 0; i < NUM_SQUARES; i++) {
@@ -132,6 +132,7 @@
 
             const startGameCallback = () => {
                 started = true;
+                changeToMove();
                 // Randomize who starts first
                 if(Math.random() < 0.5)
                     changeToMove();
